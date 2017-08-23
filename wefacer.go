@@ -5,7 +5,7 @@ import (
 	"log"
     "wefacer/wechat/wechatservices"
 )
-//start
+
 func main() {
     http.HandleFunc("/", wechatservices.ReceiveRequest) //设置访问的路由
     err := http.ListenAndServe(":80", nil) //设置监听的端口
