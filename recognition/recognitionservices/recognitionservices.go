@@ -31,13 +31,10 @@ func HandleMsg(req *http.Request, SendResponse func(resbuffer []byte)) {
 	select {
 	case value := <-faceAutochan:
 		SendResponse(MakeResponse(msghead, value))
-		break
 	case <-faceAutoerrchan:
 		SendResponse(MakeErrorResponse(msghead))
-		break
 	case <-timeout:
 		SendResponse([]byte(MakeErrorResponse(msghead)))
-		break
 	}
 }
 
