@@ -1,25 +1,38 @@
 package core
-import(
-	"io"
+
+import (
 	"crypto/sha1"
-     "fmt"
-     "encoding/base64"     
-     "io/ioutil"
+	"encoding/base64"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"net/http"
 )
+
 //对字符串进行哈希加密
-func Str2sha1(data string)string{
-    t:=sha1.New()
-    io.WriteString(t,data)
-    return fmt.Sprintf("%x",t.Sum(nil))
+func Str2sha1(data string) string {
+	t := sha1.New()
+	io.WriteString(t, data)
+	return fmt.Sprintf("%x", t.Sum(nil))
 }
 
 //将图片转换成base64格式
-func GetImageUrlBase64(path string)string{
-     picbyte,_:=ioutil.ReadFile(path)
-     return base64.StdEncoding.EncodeToString(picbyte)
+func GetImageUrlBase64(httpurl string) (base64str string, err error) {
+	resp, err1 := http.Get(httpurl)
+	defer resp.Body.Close()
+	if err1 != nil {
+		err = err1
+		return
+	}
+	content, err2 := ioutil.ReadAll(resp.Body)
+	if err2 != nil {
+		err = err2
+		return
+	}
+	base64str = GetImageBase64(content)
+	return
 }
 
-func GetImageBase64(content []byte)string{
-     return base64.StdEncoding.EncodeToString(content)
+func GetImageBase64(content []byte) string {
+	return base64.StdEncoding.EncodeToString(content)
 }
-
