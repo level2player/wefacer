@@ -4,10 +4,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
-	"wefacer/core"
 	"wefacer/models"
+	"reflect"
+	"wefacer/core"
 )
 
 func HandleMsg(req *http.Request, SendResponse func(resbuffer []byte)) {
@@ -21,8 +21,9 @@ func HandleMsg(req *http.Request, SendResponse func(resbuffer []byte)) {
 		log.Println("Msg Handle Error" + err.Error())
 	}
 	request := models.HandleRequest(content, msghead)
-	var dentifyFace models.IdentifyFace = models.BaiduDentifyFace{}
-	faceAutochan := make(chan models.DefaultFaceAuto)
+	v := reflect.New(reflect.ValueOf(models.FaceAutoStruct[core.WefacerConfig.ConfigMap["faceauto_type"]]).Type()).Elem()
+	var dentifyFace models.IdentifyFace = v.Interface().(models.IdentifyFace)
+	faceAutochan := make(chan string)
 	faceAutoerrchan := make(chan bool)
 	timeout := make(chan bool, 1)
 	Timing(timeout)
@@ -38,27 +39,13 @@ func HandleMsg(req *http.Request, SendResponse func(resbuffer []byte)) {
 	}
 }
 
-func MakeResponse(requestHead models.RequestHead, faceAuto models.DefaultFaceAuto) []byte {
+func MakeResponse(requestHead models.RequestHead, responseContent string) []byte {
 	var response models.IResponse = models.TextResponse{}
-	rescontent, err := response.EncodeResponse(requestHead, MakeResponseContent(faceAuto))
+	rescontent, err := response.EncodeResponse(requestHead, responseContent)
 	if err != nil {
 		log.Printf(err.Error())
 	}
 	return rescontent
-}
-
-func MakeResponseContent(faceAuto models.DefaultFaceAuto) string {
-	var contentstr string
-	for index, result := range faceAuto.Face {
-		index++
-		contentstr += "第" + strconv.Itoa(index) + "人\n"
-		contentstr += "年龄:" + strconv.Itoa(int(result.Age)) + "\n"
-		contentstr += "人种:" + result.Race + "\n"
-		contentstr += "性别:" + core.ConvertGender(result.Gender) + "\n"
-		contentstr += "表情:" + core.Convertexpression(result.Expression) + "\n"
-		contentstr += "眼镜:" + core.Convertglasses(result.Glasses) + "\n"
-	}
-	return contentstr
 }
 
 func MakeErrorResponse(requestHead models.RequestHead) []byte {
