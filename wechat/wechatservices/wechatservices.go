@@ -14,6 +14,7 @@ func ReceiveRequest(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	if checkWeChatSignature(w, r) {
 		recognitionservices.HandleMsg(r, func(resbuffer []byte) {
+			fmt.Println(string(resbuffer))
 			fmt.Fprintf(w, string(resbuffer))
 		})
 	}
