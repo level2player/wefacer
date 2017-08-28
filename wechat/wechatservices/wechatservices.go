@@ -7,17 +7,17 @@ import (
 	"sort"
 	"strings"
 	"wefacer/core"
-	"wefacer/recognition/recognitionservices"
 )
 
 func ReceiveRequest(w http.ResponseWriter, r *http.Request) {
 	log.Println("Receive Msg.....")
 	defer r.Body.Close()
-	if checkWeChatSignature(w, r) {
-		recognitionservices.HandleMsg(r, func(resbuffer []byte) {
-			fmt.Fprintf(w, string(resbuffer))
-		})
-	}
+	checkWeChatSignature(w, r)
+	// if checkWeChatSignature(w, r) {
+	// 	recognitionservices.HandleMsg(r, func(resbuffer []byte) {
+	// 		fmt.Fprintf(w, string(resbuffer))
+	// 	})
+	// }
 
 }
 
