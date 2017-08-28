@@ -27,13 +27,13 @@ func checkWeChatSignature(w http.ResponseWriter, r *http.Request) bool {
 		signature := strings.Join(r.Form["signature"], "")
 		timestamp := strings.Join(r.Form["timestamp"], "")
 		nonce := strings.Join(r.Form["nonce"], "")
-		//echostr := strings.Join(r.Form["echostr"], "")
+		echostr := strings.Join(r.Form["echostr"], "")
 		tmps := []string{token, timestamp, nonce}
 		sort.Strings(tmps)
 		tmpStr := tmps[0] + tmps[1] + tmps[2]
 		tmp := core.Str2sha1(tmpStr)
 		if tmp == signature {
-			//fmt.Fprintf(w, echostr)
+			fmt.Fprintf(w, echostr)
 			return true
 		} else {
 			log.Println("wechat token validation error")
