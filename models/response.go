@@ -54,8 +54,13 @@ func (textResponse TextResponse) EncodeResponse(reqhead RequestHead, responsecon
 	textResponse.CreateTime = time.Second
 	textResponse.FromUserName = reqhead.ToUserName
 	textResponse.ToUserName = reqhead.FromUserName
-	textResponse.Content = responsecontent
-	data, err = xml.Marshal(&textResponse)
+	if len(responsecontent) == 0 {
+		textResponse.Content = "照片处理失败"
+	} else {
+		textResponse.Content = responsecontent
+	}
+
+	data, err = xml.Marshal(textResponse)
 	return
 }
 func (imageResponse ImageResponse) EncodeResponse(reqhead RequestHead, responsecontent string) (data []byte, err error) {
