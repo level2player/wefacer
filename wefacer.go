@@ -8,10 +8,11 @@ import (
 )
 
 func main() {
-	log.Println("start wefacer ...")
-	http.HandleFunc("/", wechatservices.ReceiveRequest)                       //设置访问的路由
-	err := http.ListenAndServe(":"+core.WefacerConfig.ConfigMap["port"], nil) //设置监听的端口
+	core.Print_log("start wefacer ...")
+	http.HandleFunc("/", wechatservices.ReceiveRequest)
+	err := http.ListenAndServe(":"+core.WefacerConfig.ConfigMap["port"], nil)
 	if err != nil {
+		core.Print_log(err.Error())
 		log.Fatal("ListenAndServe: ", err)
 	}
 }

@@ -16,7 +16,7 @@ func Str2sha1(data string) string {
 	return fmt.Sprintf("%x", t.Sum(nil))
 }
 
-//将图片转换成base64格式
+//下载http 图片转换成base64str返回
 func GetImageUrlBase64(httpurl string) (base64str string, err error) {
 	resp, err1 := http.Get(httpurl)
 	defer resp.Body.Close()
@@ -33,6 +33,7 @@ func GetImageUrlBase64(httpurl string) (base64str string, err error) {
 	return
 }
 
+//buffer转换成base64格式
 func GetImageBase64(content []byte) string {
 	return base64.StdEncoding.EncodeToString(content)
 }

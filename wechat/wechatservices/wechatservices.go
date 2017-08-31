@@ -12,13 +12,11 @@ import (
 
 func ReceiveRequest(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	log.Println("Host=" + r.Host)
-	log.Println("RemoteAddr=" + r.RemoteAddr)
-	log.Println("RequestURI=" + r.RequestURI)
+	core.Print_log("receive msg....,Hoset=%s,RemoteAddr=%s,RequestURI=%s", r.Host, r.RemoteAddr, r.RequestURI)
 	if checkWeChatSignature(w, r) {
-		log.Println("receive msg....begin handle msg")
+		core.Print_log("is wechat msg....begin handle msg")
 		recognitionservices.HandleMsg(r, func(resbuffer []byte) {
-			fmt.Println(string(resbuffer))
+			core.Print_log("ask response,reulst=%s", string(resbuffer))
 			fmt.Fprintf(w, string(resbuffer))
 		})
 	}
