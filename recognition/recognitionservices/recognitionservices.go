@@ -26,7 +26,7 @@ func HandleMsg(req *http.Request, SendResponse func(resbuffer []byte)) {
 	faceAutoerrchan := make(chan bool)
 	timeout := make(chan bool, 1)
 	Timing(timeout)
-	defer core.Print_log("execute time:", time.Since(t_now), "\n")
+	defer core.Print_log("execute time:%s", time.Since(t_now))
 	go dentifyFace.DentifyFace(request, msghead, faceAutochan, faceAutoerrchan)
 	select {
 	case value := <-faceAutochan:

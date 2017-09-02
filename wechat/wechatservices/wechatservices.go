@@ -2,7 +2,6 @@ package wechatservices
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"sort"
 	"strings"
@@ -13,8 +12,7 @@ import (
 func ReceiveRequest(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	core.Print_log("receive msg....,Hoset=%s,RemoteAddr=%s,RequestURI=%s", r.Host, r.RemoteAddr, r.RequestURI)
-	if checkWeChatSignature(w, r) {
-		core.Print_log("is wechat msg....begin handle msg")
+	if check_wechat_signature(w, r) {
 		recognitionservices.HandleMsg(r, func(resbuffer []byte) {
 			core.Print_log("ask response,reulst=%s", string(resbuffer))
 			fmt.Fprintf(w, string(resbuffer))
@@ -23,7 +21,7 @@ func ReceiveRequest(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func checkWeChatSignature(w http.ResponseWriter, r *http.Request) bool {
+func check_wechat_signature(w http.ResponseWriter, r *http.Request) bool {
 	if r != nil {
 		r.ParseForm()
 		token := "lsy_token"
@@ -36,13 +34,14 @@ func checkWeChatSignature(w http.ResponseWriter, r *http.Request) bool {
 		tmpStr := tmps[0] + tmps[1] + tmps[2]
 		tmp := core.Str2sha1(tmpStr)
 		if tmp == signature {
+			core.Print_log("check_wechat_signature success")
 			fmt.Fprintf(w, echostr)
 			return true
 		} else {
-			log.Println("wechat token validation error")
+			core.Print_log("wechat token validation error")
 			return false
 		}
 	}
-	log.Println("wechat token validation error")
+	core.Print_log("wechat token validation error")
 	return false
 }
