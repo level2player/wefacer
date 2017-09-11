@@ -32,3 +32,16 @@ func Baidu_glasses_convert(glasses int) string {
 	}
 	return "无眼镜"
 }
+func Get_baidu_race(race string) string {
+	expressionlist := map[string]string{"亚洲人": "yellow",
+		"白人":   "white",
+		"黑人":   "black",
+		"阿拉伯人": "arabs",
+	}
+	for key, value := range expressionlist {
+		if value == race {
+			return key
+		}
+	}
+	return "无法识别"
+}
