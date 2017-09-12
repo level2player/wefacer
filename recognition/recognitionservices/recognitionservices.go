@@ -49,7 +49,7 @@ func MakeResponse(requestHead models.RequestHead, responseContent string) []byte
 
 func MakeErrorResponse(requestHead models.RequestHead) []byte {
 	var response models.IResponse = models.ErrorResponse{}
-	rescontent, err := response.EncodeResponse(requestHead, "Message Handle Error Call 13575468007")
+	rescontent, err := response.EncodeResponse(requestHead, "图片识别错误,请发高清自拍无码大图,帅斌你不要搞事情!!!")
 	if err != nil {
 		core.Print_log(err.Error())
 	}
