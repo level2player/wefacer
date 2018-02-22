@@ -55,7 +55,11 @@ func (imageRequest ImageRequest) MakeRequest(rchan chan string) {
 }
 
 func HandleRequest(content []byte, head RequestHead) IRequest {
-	v := reflect.New(reflect.ValueOf(regStruct[head.MsgType]).Type()).Elem()
+	msgType,ok:=regStruct[head.MsgType]
+	if !ok{
+		return nil
+	}
+	v := reflect.New(reflect.ValueOf(msgType).Type()).Elem()
 	request := v.Interface().(IRequest).UnmarshalRequest(content, head)
 	return request
 	//request.MakeRequest(rchan)

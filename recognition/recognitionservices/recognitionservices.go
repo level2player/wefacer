@@ -20,21 +20,23 @@ func HandleMsg(req *http.Request, SendResponse func(resbuffer []byte)) {
 		core.Print_log("Msg Handle Error" + err.Error())
 	}
 	request := models.HandleRequest(content, msghead)
-	v := reflect.New(reflect.ValueOf(models.FaceAutoStruct[core.WefacerConfig.ConfigMap["faceauto_type"]]).Type()).Elem()
-	var dentifyFace models.IdentifyFace = v.Interface().(models.IdentifyFace)
-	faceAutochan := make(chan string)
-	faceAutoerrchan := make(chan bool)
-	timeout := make(chan bool, 1)
-	Timing(timeout)
-	defer core.Print_log("execute time:%s", time.Since(t_now))
-	go dentifyFace.DentifyFace(request, msghead, faceAutochan, faceAutoerrchan)
-	select {
-	case value := <-faceAutochan:
-		SendResponse(MakeResponse(msghead, value))
-	case <-faceAutoerrchan:
-		SendResponse(MakeErrorResponse(msghead))
-	case <-timeout:
-		SendResponse([]byte(MakeErrorResponse(msghead)))
+	if request!=nil{
+		v := reflect.New(reflect.ValueOf(models.FaceAutoStruct[core.WefacerConfig.ConfigMap["faceauto_type"]]).Type()).Elem()
+		var dentifyFace models.IdentifyFace = v.Interface().(models.IdentifyFace)
+		faceAutochan := make(chan string)
+		faceAutoerrchan := make(chan bool)
+		timeout := make(chan bool, 1)
+		Timing(timeout)
+		defer core.Print_log("execute time:%s", time.Since(t_now))
+		go dentifyFace.DentifyFace(request, msghead, faceAutochan, faceAutoerrchan)
+		select {
+		case value := <-faceAutochan:
+			SendResponse(MakeResponse(msghead, value))
+		case <-faceAutoerrchan:
+			SendResponse(MakeErrorResponse(msghead))
+		case <-timeout:
+			SendResponse([]byte(MakeErrorResponse(msghead)))
+		}
 	}
 }
 
